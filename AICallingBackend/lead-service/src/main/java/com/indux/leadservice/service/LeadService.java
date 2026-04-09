@@ -76,6 +76,7 @@ public class LeadService {
         return leadRepository.count();
     }
 
+    
     public PagedResponse<LeadDTO> getAllLeadsPaginated(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Lead> leadsPage = leadRepository.findAll(pageable);

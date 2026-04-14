@@ -1,0 +1,10 @@
+/home/xenzi/internship/AIVoiceCalling/AICallingBackend/lead-service/src/main/java/com/indux/leadservice/LeadServiceApplication.java
+/home/xenzi/internship/AIVoiceCalling/AICallingBackend/lead-service/src/main/java/com/indux/leadservice/controller/LeadController.java
+/home/xenzi/internship/AIVoiceCalling/AICallingBackend/lead-service/src/main/java/com/indux/leadservice/dto/LeadDTO.java
+/home/xenzi/internship/AIVoiceCalling/AICallingBackend/lead-service/src/main/java/com/indux/leadservice/dto/PagedResponse.java
+/home/xenzi/internship/AIVoiceCalling/AICallingBackend/lead-service/src/main/java/com/indux/leadservice/model/Lead.java
+/home/xenzi/internship/AIVoiceCalling/AICallingBackend/lead-service/src/main/java/com/indux/leadservice/repository/LeadRepository.java
+/home/xenzi/internship/AIVoiceCalling/AICallingBackend/lead-service/src/main/java/com/indux/leadservice/service/LeadService.java
+/home/xenzi/internship/AIVoiceCalling/AICallingBackend/lead-service/src/main/java/com/indux/leadservice/util/CSVHelper.java
+/home/xenzi/internship/AIVoiceCalling/AICallingBackend/lead-service/src/main/java/com/indux/leadservice/util/LeadValidator.java
+/home/xenzi/internship/AIVoiceCalling/AICallingBackend/lead-service/src/main/java/com/indux/leadservice/util/ValidationResult.java

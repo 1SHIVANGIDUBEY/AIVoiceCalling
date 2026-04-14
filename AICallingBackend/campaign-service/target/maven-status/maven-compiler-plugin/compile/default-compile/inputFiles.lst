@@ -1,0 +1,12 @@
+/home/xenzi/internship/AIVoiceCalling/AICallingBackend/campaign-service/src/main/java/com/indux/campaignservice/CampaignServiceApplication.java
+/home/xenzi/internship/AIVoiceCalling/AICallingBackend/campaign-service/src/main/java/com/indux/campaignservice/client/EmailClient.java
+/home/xenzi/internship/AIVoiceCalling/AICallingBackend/campaign-service/src/main/java/com/indux/campaignservice/client/LeadClient.java
+/home/xenzi/internship/AIVoiceCalling/AICallingBackend/campaign-service/src/main/java/com/indux/campaignservice/client/SmsClient.java
+/home/xenzi/internship/AIVoiceCalling/AICallingBackend/campaign-service/src/main/java/com/indux/campaignservice/config/RestTemplateConfig.java
+/home/xenzi/internship/AIVoiceCalling/AICallingBackend/campaign-service/src/main/java/com/indux/campaignservice/controller/CampaignController.java
+/home/xenzi/internship/AIVoiceCalling/AICallingBackend/campaign-service/src/main/java/com/indux/campaignservice/dto/CampaignDTO.java
+/home/xenzi/internship/AIVoiceCalling/AICallingBackend/campaign-service/src/main/java/com/indux/campaignservice/dto/LeadDTO.java
+/home/xenzi/internship/AIVoiceCalling/AICallingBackend/campaign-service/src/main/java/com/indux/campaignservice/dto/LeadPageResponse.java
+/home/xenzi/internship/AIVoiceCalling/AICallingBackend/campaign-service/src/main/java/com/indux/campaignservice/model/Campaign.java
+/home/xenzi/internship/AIVoiceCalling/AICallingBackend/campaign-service/src/main/java/com/indux/campaignservice/repository/CampaignRepository.java
+/home/xenzi/internship/AIVoiceCalling/AICallingBackend/campaign-service/src/main/java/com/indux/campaignservice/service/CampaignService.java

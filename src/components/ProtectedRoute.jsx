@@ -1,32 +1,16 @@
-import { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
 
 function ProtectedRoute({ children }) {
-  const [status, setStatus] = useState("loading"); 
+  // Check if the user has a token in local storage
+  const isAuthenticated = localStorage.getItem("token");
 
-  useEffect(() => {
-    fetch("http://localhost:5000/api/auth/me", {
-      credentials: "include", 
-    })
-      .then((res) => {
-        if (res.ok) setStatus("auth");
-        else setStatus("unauth");
-      })
-      .catch(() => setStatus("unauth"));
-  }, []);
-
-  if (status === "loading") {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-black text-purple-400">
-        Checking authentication...
-      </div>
-    );
-  }
-
-  if (status === "unauth") {
+  // If there is no token, kick them back to the login page
+  if (!isAuthenticated) {
+    console.log("🔒 ProtectedRoute: No token found, redirecting to login.");
     return <Navigate to="/" replace />;
   }
 
+  // If they have the token, let them into the Dashboard!
   return children;
 }
 

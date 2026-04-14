@@ -1,45 +1,75 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
+
+// Centralized configuration for the microservices
+const SERVICES = {
+  LEAD: "http://localhost:8081",
+  CAMPAIGN: "http://localhost:8082",
+};
 
 function Dashboard() {
   const [data, setData] = useState([]);
   const [template, setTemplate] = useState("");
+  const [totalLeads, setTotalLeads] = useState(0);
 
   // Get username for the welcome message
   const username = localStorage.getItem("username") || "User";
 
-  const uploadCSV = (e) => {
+  // Fetch initial data from Spring Boot on load
+  useEffect(() => {
+    fetchLeads();
+    fetchCount();
+  }, []);
+
+  const fetchLeads = async () => {
+    try {
+      // Sudhir's LeadController uses pagination (default size 5)
+      const res = await fetch(`${SERVICES.LEAD}/api/leads?page=0&size=10`);
+      const result = await res.json();
+      // PagedResponse usually contains data in a 'content' field
+      setData(result.content || []);
+    } catch (err) {
+      console.error("Error fetching leads from microservice:", err);
+    }
+  };
+
+  const fetchCount = async () => {
+    try {
+      const res = await fetch(`${SERVICES.LEAD}/api/leads/count`);
+      const result = await res.json();
+      setTotalLeads(result.count || 0);
+    } catch (err) {
+      console.error("Error fetching lead count:", err);
+    }
+  };
+
+  const uploadCSV = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    // Send file to backend
+    // Send file to Spring Boot Lead Service
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append("file", file); // Must match @RequestParam("file") in Java
 
-    fetch("http://localhost:5000/upload-leads", {
-      method: "POST",
-      body: formData,
-    });
-
-    // Local preview logic
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const text = event.target.result;
-      const rows = text.split("\n").filter(row => row.trim() !== "").map((r) => r.split(","));
-      const headers = rows[0];
-
-      const formatted = rows.slice(1).map((row) => {
-        let obj = {};
-        headers.forEach((h, i) => {
-          obj[h.trim()] = row[i];
-        });
-        return obj;
+    try {
+      const response = await fetch(`${SERVICES.LEAD}/api/leads/upload`, {
+        method: "POST",
+        body: formData,
       });
 
-      setData(formatted);
-    };
-    reader.readAsText(file);
+      if (response.ok) {
+        alert("File uploaded and processed by Lead Service!");
+        // Refresh data after successful upload
+        fetchLeads();
+        fetchCount();
+      } else {
+        alert("Upload failed. Check console for details.");
+      }
+    } catch (error) {
+      console.error("Network error:", error);
+      alert("Lead Service (8081) is not responding.");
+    }
   };
 
   const startCampaign = async () => {
@@ -48,29 +78,32 @@ function Dashboard() {
       return;
     }
 
-    await fetch("http://localhost:5000/start-campaign", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        template: template,
-      }),
-    });
-
-    alert("WhatsApp Campaign Started");
+    try {
+      // Pointing to the Campaign Service on port 8082
+      await fetch(`${SERVICES.CAMPAIGN}/api/campaign/start`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          template: template,
+        }),
+      });
+      alert("WhatsApp Campaign Started");
+    } catch (error) {
+      console.error("Campaign error:", error);
+      alert("Campaign Service (8082) is not responding.");
+    }
   };
 
   return (
     <div className="flex min-h-screen bg-gray-100">
-      {/* Integrated Sidebar with Avatar/Toggle logic */}
       <Sidebar />
 
       <div className="flex-1 flex flex-col">
         <Navbar />
 
         <main className="p-8">
-          {/* Welcome Header from Avatar Feature */}
           <header className="mb-8">
             <h1 className="text-3xl font-bold text-blue-600">
               Welcome, {username}
@@ -78,16 +111,15 @@ function Dashboard() {
             <p className="text-gray-500 mt-1">Manage your leads and AI calling campaigns here.</p>
           </header>
 
-          {/* Stats Cards Section */}
+          {/* Stats Cards Section - Now using dynamic totalLeads */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <StatCard title="Total Leads" value={data.length} />
+            <StatCard title="Total Leads" value={totalLeads} />
             <StatCard title="Calls Today" value="120" />
             <StatCard title="Conversions" value="34" />
             <StatCard title="Success Rate" value="28%" />
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-            {/* CSV Upload Section */}
             <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
               <h2 className="text-lg font-semibold mb-4 text-gray-700">
                 Upload Leads CSV
@@ -102,7 +134,6 @@ function Dashboard() {
               </div>
             </div>
 
-            {/* WhatsApp Campaign Section */}
             <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
               <h2 className="text-lg font-semibold mb-4 text-gray-700">
                 WhatsApp Campaign
@@ -129,7 +160,7 @@ function Dashboard() {
           {data.length > 0 && (
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
               <div className="p-4 border-b border-gray-100 bg-gray-50">
-                <h2 className="font-semibold text-gray-700">Leads Preview</h2>
+                <h2 className="font-semibold text-gray-700">Leads Preview (Database)</h2>
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full text-left">
@@ -162,7 +193,6 @@ function Dashboard() {
     </div>
   );
 }
-
 
 function StatCard({ title, value }) {
   return (
